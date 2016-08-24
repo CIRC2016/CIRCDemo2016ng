@@ -3,7 +3,6 @@ package org.circ34.demo;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,6 +16,9 @@ public class Board extends JPanel implements ActionListener{
     private Image bg;
     private int bgx;
     private int bgy;
+    private boolean conMove=false;
+    private int bgJump=0;
+    private int bgJumpBond=500;
 
     private Image p1;
     private Image p1f;
@@ -37,13 +39,15 @@ public class Board extends JPanel implements ActionListener{
 
     private Timer timer=new Timer(INTERVAL,this);;
     private int timerJump=0;
-    private int timerJumpBond=25;
+    private int timerJumpBond=30;
     private int p1Jump=0;
     private int p1JumpBond=10;
+    private int score=0;
 
     private JButton startButton=new JButton("Start");
     private JButton scoreboardButton=new JButton("Scoreboard");
     private boolean gameEntered=false;
+    private JLabel scoreLabel= new JLabel("Score: ");
 
     private KeyAdapter keyAction=new KeyAdapter() {
         @Override
@@ -65,6 +69,7 @@ public class Board extends JPanel implements ActionListener{
     private void initBoard(){
         addButton();
         loadImage();
+        scoreLabel.setFocusable(false);
         bgx=0;
         bgy=-2048+512+150;
     }
@@ -87,11 +92,14 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void startGame(){
+        add(scoreLabel);
+        score=0;
         gameEntered=true;
         dropArrayList=new ArrayList<>();
         p1y=512-150;
         bgx=0;
         bgy=-2048+512+200;
+        conMove=false;
         addKeyListener(keyAction);
         setFocusable(true);
         requestFocus();
@@ -99,10 +107,12 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void endGame(){
+        remove(scoreLabel);
         gameEntered=false;
         addButton();
         timer.stop();
         bgy=-2048+512+150;
+        conMove=true;
         removeKeyListener(keyAction);
     }
 
@@ -134,6 +144,7 @@ public class Board extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        scoreLabel.setText("Score: "+(++score));
         timerJump++;
         if (timerJump==timerJumpBond){
             spawnBall();
@@ -156,8 +167,8 @@ public class Board extends JPanel implements ActionListener{
         }
         for (int a=0;a<dropArrayList.size();a++){
             Drop curr=dropArrayList.get(a);
-            curr.y+=2;
-            if (curr.y>512){
+            curr.y+=3;
+            if (curr.y>500){
                 dropArrayList.remove(a);
                 a--;
             }else if (curr.y>p1y-100&&curr.y<p1y+200&&p1Col==curr.col){
@@ -166,9 +177,11 @@ public class Board extends JPanel implements ActionListener{
                 endGame();
             }
         }
-        if (bgy<0){
+        if ((bgy<-2048+512+200+500)||(bgy<0&&conMove)){
             bgy++;
-        }
+        }else if(bgy==-2048+512+200+500) {
+            if (bgJump++==bgJumpBond) conMove=true;
+        }else if(bgy==0) endGame();
         repaint();
     }
 
