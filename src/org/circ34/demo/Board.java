@@ -20,6 +20,8 @@ public class Board extends JPanel implements ActionListener{
     private Image p1;
     private int p1Col=1;
     private int p1y;
+    private boolean p1L=false;
+    private boolean p1R=false;
 
     private class Drop{
         public int col;
@@ -34,6 +36,8 @@ public class Board extends JPanel implements ActionListener{
     private Timer timer;
     private int timerJump=0;
     private int timerJumpBond=25;
+    private int p1Jump=0;
+    private int p1JumpBond=10;
 
     public Board(){
         initBoard();
@@ -51,9 +55,9 @@ public class Board extends JPanel implements ActionListener{
                 int key=e.getKeyCode();
                 System.out.println(e.getKeyCode()+" pressed");
                 if(key==KeyEvent.VK_LEFT){
-                    if (p1Col!=1) p1Col--;
+                    if (p1Col!=1&&!p1R) p1L=true;
                 }else if (key==KeyEvent.VK_RIGHT){
-                    if (p1Col!=8) p1Col++;
+                    if (p1Col!=8&&!p1L) p1R=true;
                 }
             }
         });
@@ -90,6 +94,21 @@ public class Board extends JPanel implements ActionListener{
         if (timerJump==timerJumpBond){
             spawnBall();
             timerJump=0;
+        }
+        if(p1L){
+            p1Jump++;
+            if (p1Jump==p1JumpBond){
+                p1Jump=0;
+                p1Col--;
+                p1L=false;
+            }
+        }else if(p1R){
+            p1Jump++;
+            if (p1Jump==p1JumpBond){
+                p1Jump=0;
+                p1Col++;
+                p1R=false;
+            }
         }
         for (int a=0;a<dropArrayList.size();a++){
             Drop curr=dropArrayList.get(a);
