@@ -3,6 +3,7 @@ package org.circ34.demo;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,38 +33,77 @@ public class Board extends JPanel implements ActionListener{
             y=0;
         }
     }
-    private ArrayList<Drop> dropArrayList=new ArrayList<>();
+    private ArrayList<Drop> dropArrayList;
 
-    private Timer timer;
+    private Timer timer=new Timer(INTERVAL,this);;
     private int timerJump=0;
     private int timerJumpBond=25;
     private int p1Jump=0;
     private int p1JumpBond=10;
+
+    private JButton startButton=new JButton("Start");
+    private JButton scoreboardButton=new JButton("Scoreboard");
+    private boolean gameEntered=false;
+
+    private KeyAdapter keyAction=new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            super.keyPressed(e);
+            int key=e.getKeyCode();
+            if(key==KeyEvent.VK_LEFT){
+                if (p1Col!=1&&!p1R) p1L=true;
+            }else if (key==KeyEvent.VK_RIGHT){
+                if (p1Col!=8&&!p1L) p1R=true;
+            }
+        }
+    };
 
     public Board(){
         initBoard();
     }
 
     private void initBoard(){
+        addButton();
         loadImage();
+        bgx=0;
+        bgy=-2048+512+150;
+    }
+
+    private void addButton() {
+        add(startButton);
+        add(scoreboardButton);
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startGame();
+                removeButton();
+            }
+        });
+    }
+
+    private void removeButton(){
+        remove(startButton);
+        remove(scoreboardButton);
+    }
+
+    private void startGame(){
+        gameEntered=true;
+        dropArrayList=new ArrayList<>();
         p1y=512-150;
         bgx=0;
         bgy=-2048+512+200;
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-                int key=e.getKeyCode();
-                if(key==KeyEvent.VK_LEFT){
-                    if (p1Col!=1&&!p1R) p1L=true;
-                }else if (key==KeyEvent.VK_RIGHT){
-                    if (p1Col!=8&&!p1L) p1R=true;
-                }
-            }
-        });
+        addKeyListener(keyAction);
         setFocusable(true);
-        timer = new Timer(INTERVAL,this);
+        requestFocus();
         timer.start();
+    }
+
+    private void endGame(){
+        gameEntered=false;
+        addButton();
+        timer.stop();
+        bgy=-2048+512+150;
+        removeKeyListener(keyAction);
     }
 
     private void loadImage(){
@@ -76,17 +116,19 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void spawnBall(){
-        dropArrayList.add(new Drop(new Random().nextInt(6)+1));
+        dropArrayList.add(new Drop(new Random(System.currentTimeMillis()+timerJump).nextInt(6)+1));
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(bg, bgx, bgy, null);
-        g.drawImage((p1Col%2==1)?p1:p1f, LOC[p1Col], p1y,null);
-        for (int a=0;a<dropArrayList.size();a++){
-            Drop curr=dropArrayList.get(a);
-            g.drawImage(p1,LOC[curr.col],curr.y,null);
+        if (gameEntered) {
+            g.drawImage((p1Col % 2 == 1) ? p1 : p1f, LOC[p1Col], p1y, null);
+            for (int a = 0; a < dropArrayList.size(); a++) {
+                Drop curr = dropArrayList.get(a);
+                g.drawImage(p1, LOC[curr.col], curr.y, null);
+            }
         }
     }
 
@@ -121,6 +163,7 @@ public class Board extends JPanel implements ActionListener{
             }else if (curr.y>p1y-100&&curr.y<p1y+200&&p1Col==curr.col){
                 dropArrayList.remove(a);
                 a--;
+                endGame();
             }
         }
         if (bgy<0){
