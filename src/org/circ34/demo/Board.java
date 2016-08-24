@@ -10,7 +10,7 @@ public class Board extends JPanel implements ActionListener{
 
     private final int INTERVAL=40;
     private int[] LOC={
-        0,0,100,200,300,400,500,600,700
+        0,40,160,280,400,510,630
     };
 
     private Image bg;
@@ -18,6 +18,7 @@ public class Board extends JPanel implements ActionListener{
     private int bgy;
 
     private Image p1;
+    private Image p1f;
     private int p1Col=1;
     private int p1y;
     private boolean p1L=false;
@@ -47,13 +48,12 @@ public class Board extends JPanel implements ActionListener{
         loadImage();
         p1y=512-150;
         bgx=0;
-        bgy=-2048+512;
+        bgy=-2048+512+200;
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                //super.keyPressed(e);
+                super.keyPressed(e);
                 int key=e.getKeyCode();
-                System.out.println(e.getKeyCode()+" pressed");
                 if(key==KeyEvent.VK_LEFT){
                     if (p1Col!=1&&!p1R) p1L=true;
                 }else if (key==KeyEvent.VK_RIGHT){
@@ -69,19 +69,21 @@ public class Board extends JPanel implements ActionListener{
     private void loadImage(){
         ImageIcon tmp = new ImageIcon("p1.png");
         p1=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p1f.png");
+        p1f=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
         tmp = new ImageIcon("back.png");
         bg=tmp.getImage();
     }
 
     private void spawnBall(){
-        dropArrayList.add(new Drop(new Random().nextInt(8)+1));
+        dropArrayList.add(new Drop(new Random().nextInt(6)+1));
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(bg, bgx, bgy, null);
-        g.drawImage(p1, LOC[p1Col], p1y,null);
+        g.drawImage((p1Col%2==1)?p1:p1f, LOC[p1Col], p1y,null);
         for (int a=0;a<dropArrayList.size();a++){
             Drop curr=dropArrayList.get(a);
             g.drawImage(p1,LOC[curr.col],curr.y,null);
