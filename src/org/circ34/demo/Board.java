@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 public class Board extends JPanel implements ActionListener{
@@ -42,12 +44,22 @@ public class Board extends JPanel implements ActionListener{
     private int timerJumpBond=30;
     private int p1Jump=0;
     private int p1JumpBond=10;
-    private int score=0;
+    private int pscore=0;
 
     private JButton startButton=new JButton("Start");
     private JButton scoreboardButton=new JButton("Scoreboard");
     private boolean gameEntered=false;
     private JLabel scoreLabel= new JLabel("Score: ");
+
+    private class ScoreRecord{
+        public String name;
+        public int score;
+        public ScoreRecord(String iname,int iscore){
+            name=iname;
+            score=iscore;
+        }
+    }
+    private ArrayList<ScoreRecord> scoreRecordArrayList=new ArrayList<>();
 
     private KeyAdapter keyAction=new KeyAdapter() {
         @Override
@@ -84,6 +96,24 @@ public class Board extends JPanel implements ActionListener{
                 removeButton();
             }
         });
+        scoreboardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                /*
+                 * FIXME
+                 * seems like this got called as many time as the game was played when clicked
+                 */
+                showScoreboard();
+            }
+        });
+    }
+
+    private void showScoreboard(){
+        String scoreString=String.format("%-32s %s\n","Name","Score");
+        for (int a=0;a<scoreRecordArrayList.size();a++){
+            scoreString+=String.format("%-32s %d\n",scoreRecordArrayList.get(a).name,scoreRecordArrayList.get(a).score);
+        }
+        JOptionPane.showMessageDialog(this,scoreString,"Scoreboard",JOptionPane.PLAIN_MESSAGE);
     }
 
     private void removeButton(){
@@ -93,7 +123,7 @@ public class Board extends JPanel implements ActionListener{
 
     private void startGame(){
         add(scoreLabel);
-        score=0;
+        pscore=0;
         gameEntered=true;
         dropArrayList=new ArrayList<>();
         p1y=512-150;
@@ -114,6 +144,13 @@ public class Board extends JPanel implements ActionListener{
         bgy=-2048+512+150;
         conMove=true;
         removeKeyListener(keyAction);
+        scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got "+pscore+" points!\nEnter your name:"),pscore));
+        scoreRecordArrayList.sort(new Comparator<ScoreRecord>() {
+            @Override
+            public int compare(ScoreRecord o1, ScoreRecord o2) {
+                return o2.score-o1.score;
+            }
+        });
     }
 
     private void loadImage(){
@@ -144,7 +181,7 @@ public class Board extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        scoreLabel.setText("Score: "+(++score));
+        scoreLabel.setText("Score: "+(++pscore));
         timerJump++;
         if (timerJump==timerJumpBond){
             spawnBall();
