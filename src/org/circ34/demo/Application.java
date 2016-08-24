@@ -1,12 +1,10 @@
 package org.circ34.demo;
 
 import java.awt.EventQueue;
-import javax.swing.*;
+import javax.swing.JFrame;
 
 
 public class Application extends JFrame {
-
-    private Board board;
 
     public Application() {
 
@@ -16,7 +14,7 @@ public class Application extends JFrame {
     private void initUI() {
 
         add(new Board());
-        //add(new Welcome().p1);
+
         setSize(768, 768);
 
         setTitle("Application");
