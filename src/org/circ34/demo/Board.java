@@ -1,12 +1,13 @@
 package org.circ34.demo;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
 
 public class Board extends JPanel implements ActionListener{
 
@@ -52,7 +53,7 @@ public class Board extends JPanel implements ActionListener{
     private boolean gameEntered=false;
     private JLabel scoreLabel= new JLabel("Score: ");
 
-    private class ScoreRecord implements Comparable<ScoreRecord>{
+    public class ScoreRecord implements Comparable<ScoreRecord>{
         public String name;
         public int score;
         public ScoreRecord(String iname,int iscore){
@@ -63,7 +64,7 @@ public class Board extends JPanel implements ActionListener{
             return a.score-score;
         }
     }
-    private ArrayList<ScoreRecord> scoreRecordArrayList=new ArrayList<>();
+    public ArrayList<ScoreRecord> scoreRecordArrayList=new ArrayList<>();
 
     private KeyAdapter keyAction=new KeyAdapter() {
         @Override
@@ -85,6 +86,7 @@ public class Board extends JPanel implements ActionListener{
     };
 
     public Board(){
+        readFile();
         addButton();
         loadImage();
         scoreLabel.setFocusable(false);
@@ -109,6 +111,22 @@ public class Board extends JPanel implements ActionListener{
         });
     }
 
+    private void readFile(){
+        File save=new File("score.txt");
+        try {
+            if (save.exists()){
+                BufferedReader br=new BufferedReader(new FileReader("score.txt"));
+                String tmp=new String();
+                while(br.ready()){
+                    Scanner scanner=new Scanner(br.readLine());
+                    scoreRecordArrayList.add(new ScoreRecord(scanner.next(),scanner.nextInt()));
+                }
+                br.close();
+            }else save.createNewFile();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private void addButton() {
         add(startButton);
