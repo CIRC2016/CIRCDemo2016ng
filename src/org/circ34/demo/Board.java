@@ -39,7 +39,7 @@ public class Board extends JPanel implements ActionListener{
     }
     private ArrayList<Drop> dropArrayList;
 
-    private Timer timer=new Timer(INTERVAL,this);;
+    private Timer timer=new Timer(INTERVAL,this);
     private int timerJump=0;
     private int timerJumpBond=30;
     private int p1Jump=0;
@@ -84,11 +84,6 @@ public class Board extends JPanel implements ActionListener{
         scoreLabel.setFocusable(false);
         bgx=0;
         bgy=-2048+512+150;
-    }
-
-    private void addButton() {
-        add(startButton);
-        add(scoreboardButton);
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -99,21 +94,18 @@ public class Board extends JPanel implements ActionListener{
         scoreboardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*
-                 * FIXME
-                 * seems like this got called as many time as the game was played when clicked
-                 */
-                showScoreboard();
+                String scoreString=String.format("%-32s %s\n","Name","Score");
+                for (int a=0;a<scoreRecordArrayList.size();a++){
+                    scoreString+=String.format("%-32s %d\n",scoreRecordArrayList.get(a).name,scoreRecordArrayList.get(a).score);
+                }
+                JOptionPane.showMessageDialog(null,scoreString,"Scoreboard",JOptionPane.PLAIN_MESSAGE);
             }
         });
     }
 
-    private void showScoreboard(){
-        String scoreString=String.format("%-32s %s\n","Name","Score");
-        for (int a=0;a<scoreRecordArrayList.size();a++){
-            scoreString+=String.format("%-32s %d\n",scoreRecordArrayList.get(a).name,scoreRecordArrayList.get(a).score);
-        }
-        JOptionPane.showMessageDialog(this,scoreString,"Scoreboard",JOptionPane.PLAIN_MESSAGE);
+    private void addButton() {
+        add(startButton);
+        add(scoreboardButton);
     }
 
     private void removeButton(){
