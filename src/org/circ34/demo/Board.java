@@ -185,7 +185,7 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
     }
 
-    private void endGame() {
+    private void endGame(boolean perfect) {
         p1y = 512 - 150;
         remove(scoreLabel);
         gameEntered = false;
@@ -194,7 +194,8 @@ public class Board extends JPanel implements ActionListener {
         bgy = -2048 + 512 + 150;
         conMove = true;
         removeKeyListener(keyAction);
-        scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:"), pscore));
+        if (!perfect) scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:"), pscore));
+        else scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nThe perfect score!\nEnter your name:"), pscore));
         Collections.sort(scoreRecordArrayList);
     }
 
@@ -299,7 +300,7 @@ public class Board extends JPanel implements ActionListener {
                 dropArrayList.remove(a);
                 a--;
                 repaint();
-                endGame();
+                endGame(false);
             }
         }
         if ((bgy < -2048 + 512 + 200 + 500) || (bgy < 0 && conMove)) {
@@ -308,7 +309,7 @@ public class Board extends JPanel implements ActionListener {
         } else if (bgy == -2048 + 512 + 200 + 500) {
             if (boost) bgJump++;
             if (bgJump++ >= bgJumpBond) conMove = true;
-        } else if (bgy == 0) endGame();
+        } else if (bgy >= 0) endGame(true);
         repaint();
     }
 
