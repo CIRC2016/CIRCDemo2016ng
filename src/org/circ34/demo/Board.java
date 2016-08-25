@@ -28,6 +28,7 @@ public class Board extends JPanel implements ActionListener{
     private int p1y;
     private boolean p1L=false;
     private boolean p1R=false;
+    private boolean boost=false;
 
     private class Drop{
         public int col;
@@ -37,7 +38,7 @@ public class Board extends JPanel implements ActionListener{
             y=0;
         }
     }
-    private ArrayList<Drop> dropArrayList;
+    private ArrayList<Drop> dropArrayList=new ArrayList<>();
 
     private Timer timer=new Timer(INTERVAL,this);
     private int timerJump=0;
@@ -51,12 +52,15 @@ public class Board extends JPanel implements ActionListener{
     private boolean gameEntered=false;
     private JLabel scoreLabel= new JLabel("Score: ");
 
-    private class ScoreRecord{
+    private class ScoreRecord implements Comparable<ScoreRecord>{
         public String name;
         public int score;
         public ScoreRecord(String iname,int iscore){
             name=iname;
             score=iscore;
+        }
+        public int compareTo(ScoreRecord a){
+            return a.score-score;
         }
     }
     private ArrayList<ScoreRecord> scoreRecordArrayList=new ArrayList<>();
@@ -70,15 +74,17 @@ public class Board extends JPanel implements ActionListener{
                 if (p1Col!=1&&!p1R) p1L=true;
             }else if (key==KeyEvent.VK_RIGHT){
                 if (p1Col!=8&&!p1L) p1R=true;
+            }else if (key==KeyEvent.VK_UP){
+                boost=true;
             }
+        }
+        @Override
+        public void keyReleased(KeyEvent e){
+            if (e.getKeyCode()==KeyEvent.VK_UP) boost=false;
         }
     };
 
     public Board(){
-        initBoard();
-    }
-
-    private void initBoard(){
         addButton();
         loadImage();
         scoreLabel.setFocusable(false);
@@ -103,6 +109,7 @@ public class Board extends JPanel implements ActionListener{
         });
     }
 
+
     private void addButton() {
         add(startButton);
         add(scoreboardButton);
@@ -117,7 +124,7 @@ public class Board extends JPanel implements ActionListener{
         add(scoreLabel);
         pscore=0;
         gameEntered=true;
-        dropArrayList=new ArrayList<>();
+        dropArrayList.clear();
         p1y=512-150;
         bgx=0;
         bgy=-2048+512+200;
@@ -137,12 +144,7 @@ public class Board extends JPanel implements ActionListener{
         conMove=true;
         removeKeyListener(keyAction);
         scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got "+pscore+" points!\nEnter your name:"),pscore));
-        scoreRecordArrayList.sort(new Comparator<ScoreRecord>() {
-            @Override
-            public int compare(ScoreRecord o1, ScoreRecord o2) {
-                return o2.score-o1.score;
-            }
-        });
+        Collections.sort(scoreRecordArrayList);
     }
 
     private void loadImage(){
@@ -155,7 +157,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void spawnBall(){
-        dropArrayList.add(new Drop(new Random(System.currentTimeMillis()+timerJump).nextInt(6)+1));
+        dropArrayList.add(new Drop(new Random().nextInt(6)+1));
     }
 
     @Override
@@ -173,6 +175,7 @@ public class Board extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (boost) pscore++;
         scoreLabel.setText("Score: "+(++pscore));
         timerJump++;
         if (timerJump==timerJumpBond){
@@ -197,19 +200,23 @@ public class Board extends JPanel implements ActionListener{
         for (int a=0;a<dropArrayList.size();a++){
             Drop curr=dropArrayList.get(a);
             curr.y+=3;
+            if (boost) curr.y+=1;
             if (curr.y>500){
                 dropArrayList.remove(a);
                 a--;
             }else if (curr.y>p1y-100&&curr.y<p1y+200&&p1Col==curr.col){
                 dropArrayList.remove(a);
                 a--;
+                repaint();
                 endGame();
             }
         }
         if ((bgy<-2048+512+200+500)||(bgy<0&&conMove)){
             bgy++;
+            if (boost) bgy++;
         }else if(bgy==-2048+512+200+500) {
-            if (bgJump++==bgJumpBond) conMove=true;
+            if (boost) bgJump++;
+            if (bgJump++>=bgJumpBond) conMove=true;
         }else if(bgy==0) endGame();
         repaint();
     }
