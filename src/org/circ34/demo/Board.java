@@ -17,7 +17,6 @@ public class Board extends JPanel implements ActionListener{
     };
 
     private Image bg;
-    private int bgx;
     private int bgy;
     private boolean conMove=false;
     private int bgJump=0;
@@ -74,7 +73,7 @@ public class Board extends JPanel implements ActionListener{
             if(key==KeyEvent.VK_LEFT){
                 if (p1Col!=1&&!p1R) p1L=true;
             }else if (key==KeyEvent.VK_RIGHT){
-                if (p1Col!=8&&!p1L) p1R=true;
+                if (p1Col!=6&&!p1L) p1R=true;
             }else if (key==KeyEvent.VK_UP){
                 boost=true;
             }
@@ -90,7 +89,6 @@ public class Board extends JPanel implements ActionListener{
         addButton();
         loadImage();
         scoreLabel.setFocusable(false);
-        bgx=0;
         bgy=-2048+512+150;
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -144,7 +142,6 @@ public class Board extends JPanel implements ActionListener{
         gameEntered=true;
         dropArrayList.clear();
         p1y=512-150;
-        bgx=0;
         bgy=-2048+512+200;
         conMove=false;
         addKeyListener(keyAction);
@@ -181,7 +178,7 @@ public class Board extends JPanel implements ActionListener{
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(bg, bgx, bgy, null);
+        g.drawImage(bg, 0, bgy, null);
         if (gameEntered) {
             g.drawImage((p1Col % 2 == 1) ? p1 : p1f, LOC[p1Col], p1y, null);
             for (int a = 0; a < dropArrayList.size(); a++) {

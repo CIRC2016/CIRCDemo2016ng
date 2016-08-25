@@ -3,7 +3,7 @@ package org.circ34.demo;
 import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.io.FileWriter;
 
 
@@ -16,11 +16,10 @@ public class Application extends JFrame {
     }
 
     private void initUI() {
-
         add(board);
 
         setSize(768, 512);
-
+        setResizable(false);
         setTitle("CIRCDemo2016");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
