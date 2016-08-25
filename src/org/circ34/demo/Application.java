@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
 import java.io.FileWriter;
+import java.net.URLEncoder;
 
 
 public class Application extends JFrame {
@@ -30,7 +31,7 @@ public class Application extends JFrame {
                 try{
                     FileWriter fw=new FileWriter("score.txt",false);
                     for (int a=0;a<board.scoreRecordArrayList.size();a++){
-                        fw.write(board.scoreRecordArrayList.get(a).name+" "+board.scoreRecordArrayList.get(a).score+"\n");
+                        fw.write(URLEncoder.encode(board.scoreRecordArrayList.get(a).name,"UTF-8")+" "+board.scoreRecordArrayList.get(a).score+"\n");
                     }
                     fw.close();
                 }catch (Exception ex){

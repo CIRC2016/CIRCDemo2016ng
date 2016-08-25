@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
+import java.net.URLDecoder;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -147,7 +148,7 @@ public class Board extends JPanel implements ActionListener {
                 String tmp = new String();
                 while (br.ready()) {
                     Scanner scanner = new Scanner(br.readLine());
-                    scoreRecordArrayList.add(new ScoreRecord(scanner.next(), scanner.nextInt()));
+                    scoreRecordArrayList.add(new ScoreRecord(URLDecoder.decode(scanner.next(),"UTF-8"), scanner.nextInt()));
                 }
                 br.close();
             } else save.createNewFile();
@@ -194,8 +195,13 @@ public class Board extends JPanel implements ActionListener {
         bgy = -2048 + 512 + 150;
         conMove = true;
         removeKeyListener(keyAction);
-        if (!perfect) scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:","johndoe"), pscore));
-        else scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nThe perfect score!\nEnter your name:","johndoe"), pscore));
+        String tmp="";
+        if (!perfect) tmp=JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:","johndoe");
+        else tmp=JOptionPane.showInputDialog("You got " + pscore + " points!\nThe perfect score!\nEnter your name:","johndoe");
+        if (tmp==null) tmp="";
+        Scanner sc=new Scanner(tmp);
+        if (!sc.hasNext()) tmp="johndoe";
+        scoreRecordArrayList.add(new ScoreRecord(tmp,pscore));
         Collections.sort(scoreRecordArrayList);
     }
 
