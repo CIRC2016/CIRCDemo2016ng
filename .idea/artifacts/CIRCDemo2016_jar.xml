@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CIRCDemo2016:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CIRCDemo2016_jar</output-path>
+    <root id="archive" name="CIRCDemo2016.jar">
+      <element id="module-output" name="CIRCDemo2016" />
+    </root>
+  </artifact>
+</component>

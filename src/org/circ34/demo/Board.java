@@ -42,7 +42,7 @@ public class Board extends JPanel implements ActionListener {
 
         public Drop(int column) {
             col = column;
-            y = 0;
+            y = -100;
         }
     }
 
@@ -199,41 +199,41 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void loadImage() {
-        ImageIcon tmp = new ImageIcon("p1f.png");
+        ImageIcon tmp = new ImageIcon(getClass().getResource("/res/p1f.png"));
         pimage[0][0] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p1f2.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p1f2.png"));
         pimage[0][1] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p1.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p1.png"));
         pimage[0][2] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p12.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p12.png"));
         pimage[0][3] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p2f.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p2f.png"));
         pimage[1][0] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p2f2.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p2f2.png"));
         pimage[1][1] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p2.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p2.png"));
         pimage[1][2] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p22.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p22.png"));
         pimage[1][3] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p3f.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p3f.png"));
         pimage[2][0] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p3f2.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p3f2.png"));
         pimage[2][1] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p3.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p3.png"));
         pimage[2][2] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p32.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p32.png"));
         pimage[2][3] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p4f.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p4f.png"));
         pimage[3][0] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p4f2.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p4f2.png"));
         pimage[3][1] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p4.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p4.png"));
         pimage[3][2] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("p42.png");
+        tmp = new ImageIcon(getClass().getResource("/res/p42.png"));
         pimage[3][3] = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("drop.png");
+        tmp = new ImageIcon(getClass().getResource("/res/drop.png"));
         dropImage = tmp.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        tmp = new ImageIcon("back.png");
+        tmp = new ImageIcon(getClass().getResource("/res/back.png"));
         bg = tmp.getImage();
     }
 
@@ -253,7 +253,7 @@ public class Board extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(bg, 0, bgy, this);
         if (gameEntered) {
-            g.drawImage(getAniImage(), LOC[p1Col], p1y, thisl);
+            g.drawImage(getAniImage(), LOC[p1Col], p1y, this);
             for (int a = 0; a < dropArrayList.size(); a++) {
                 Drop curr = dropArrayList.get(a);
                 g.drawImage(dropImage, LOC[curr.col], curr.y, this);
