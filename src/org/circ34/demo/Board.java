@@ -22,13 +22,14 @@ public class Board extends JPanel implements ActionListener{
     private int bgJump=0;
     private int bgJumpBond=500;
 
-    private Image p1;
-    private Image p1f;
+    private Image[][] pimage=new Image[4][4];
+    private int pimageSelect=0;
     private int p1Col=1;
-    private int p1y;
+    private int p1y=512-150;
     private boolean p1L=false;
     private boolean p1R=false;
     private boolean boost=false;
+    private int ani=0;
 
     private class Drop{
         public int col;
@@ -39,6 +40,7 @@ public class Board extends JPanel implements ActionListener{
         }
     }
     private ArrayList<Drop> dropArrayList=new ArrayList<>();
+    private Image dropImage;
 
     private Timer timer=new Timer(INTERVAL,this);
     private int timerJump=0;
@@ -47,8 +49,10 @@ public class Board extends JPanel implements ActionListener{
     private int p1JumpBond=10;
     private int pscore=0;
 
+    private JButton leftButton=new JButton("⇚");
     private JButton startButton=new JButton("Start");
     private JButton scoreboardButton=new JButton("Scoreboard");
+    private JButton rightButton=new JButton("⇛");
     private boolean gameEntered=false;
     private JLabel scoreLabel= new JLabel("Score: ");
 
@@ -85,6 +89,7 @@ public class Board extends JPanel implements ActionListener{
     };
 
     public Board(){
+        p1y=512-150;
         readFile();
         addButton();
         loadImage();
@@ -107,6 +112,20 @@ public class Board extends JPanel implements ActionListener{
                 JOptionPane.showMessageDialog(null,scoreString,"Scoreboard",JOptionPane.PLAIN_MESSAGE);
             }
         });
+        leftButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (++pimageSelect<0)pimageSelect=3;
+                repaint();
+            }
+        });
+        rightButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (++pimageSelect>3)pimageSelect=0;
+                repaint();
+            }
+        });
     }
 
     private void readFile(){
@@ -127,18 +146,23 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void addButton() {
+        add(leftButton);
         add(startButton);
         add(scoreboardButton);
+        add(rightButton);
     }
 
     private void removeButton(){
+        remove(leftButton);
         remove(startButton);
         remove(scoreboardButton);
+        remove(rightButton);
     }
 
     private void startGame(){
         add(scoreLabel);
         pscore=0;
+        ani=0;
         gameEntered=true;
         dropArrayList.clear();
         p1y=512-150;
@@ -151,6 +175,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void endGame(){
+        p1y=512-150;
         remove(scoreLabel);
         gameEntered=false;
         addButton();
@@ -163,10 +188,40 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void loadImage(){
-        ImageIcon tmp = new ImageIcon("p1.png");
-        p1=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
-        tmp=new ImageIcon("p1f.png");
-        p1f=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        ImageIcon tmp = new ImageIcon("p1f.png");
+        pimage[0][0]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p1f2.png");
+        pimage[0][1]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p1.png");
+        pimage[0][2]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p12.png");
+        pimage[0][3]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p2f.png");
+        pimage[1][0]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p2f2.png");
+        pimage[1][1]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p2.png");
+        pimage[1][2]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p22.png");
+        pimage[1][3]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p3f.png");
+        pimage[2][0]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p3f2.png");
+        pimage[2][1]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p3.png");
+        pimage[2][2]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p32.png");
+        pimage[2][3]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p4f.png");
+        pimage[3][0]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p4f2.png");
+        pimage[3][1]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp = new ImageIcon("p4.png");
+        pimage[3][2]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("p42.png");
+        pimage[3][3]=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
+        tmp=new ImageIcon("drop.png");
+        dropImage=tmp.getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH);
         tmp = new ImageIcon("back.png");
         bg=tmp.getImage();
     }
@@ -175,21 +230,31 @@ public class Board extends JPanel implements ActionListener{
         dropArrayList.add(new Drop(new Random().nextInt(6)+1));
     }
 
+    private Image getAniImage(){
+        int index=(p1Col % 2)*2;
+        if (boost) index+= (ani%4>=2)?0:1;
+        else index+= ((ani%6>=2)? 0:1);
+        return pimage[pimageSelect][index];
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(bg, 0, bgy, null);
+        g.drawImage(bg, 0, bgy, this);
         if (gameEntered) {
-            g.drawImage((p1Col % 2 == 1) ? p1 : p1f, LOC[p1Col], p1y, null);
+            g.drawImage( getAniImage(), LOC[p1Col], p1y, thisl);
             for (int a = 0; a < dropArrayList.size(); a++) {
                 Drop curr = dropArrayList.get(a);
-                g.drawImage(p1, LOC[curr.col], curr.y, null);
+                g.drawImage(dropImage, LOC[curr.col], curr.y, this);
             }
+        }else {
+            g.drawImage( pimage[pimageSelect][3], LOC[3], p1y-100, this);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        ani++;
         if (boost) pscore++;
         scoreLabel.setText("Score: "+(++pscore));
         timerJump++;
