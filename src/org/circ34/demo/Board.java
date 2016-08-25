@@ -194,8 +194,8 @@ public class Board extends JPanel implements ActionListener {
         bgy = -2048 + 512 + 150;
         conMove = true;
         removeKeyListener(keyAction);
-        if (!perfect) scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:"), pscore));
-        else scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nThe perfect score!\nEnter your name:"), pscore));
+        if (!perfect) scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nEnter your name:","johndoe"), pscore));
+        else scoreRecordArrayList.add(new ScoreRecord(JOptionPane.showInputDialog("You got " + pscore + " points!\nThe perfect score!\nEnter your name:","johndoe"), pscore));
         Collections.sort(scoreRecordArrayList);
     }
 
